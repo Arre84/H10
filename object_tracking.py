@@ -1,7 +1,24 @@
+"""
+    object_tracking.py
+    This pythons script performs object tracking with image descriptors, and computes
+    visual analytics, more specific the times an object crosses a point from left to right
+    and from right to left.
+
+    Author:Emilio Arredondo Payán
+    Organisation: Universidad de Monterrey
+    Contact: Emilio.Arredondop@udem.edu
+    First created: wednesday may 1st 2024
+    Last updated: sunday may 5th 2024
+
+    EXAMPLE OF USAGE:
+    python .\object_tracking.py --img_obj .\object.jpg --video .\video_object.mp4 --resize 30 
+"""
+
 import numpy as np
 import cv2 as cv
 import argparse
 from numpy.typing import NDArray
+
 
 previous = []
 left = 0
@@ -217,6 +234,18 @@ def estimate_centroid(current: tuple[int, int], previous: tuple[int, int], smoot
         return current
 
 def compute_change(img:NDArray, width:int, centroid:tuple[int, int],previous:tuple[int, int])->None:
+    """
+    Tracks the changes in the position of the frame, left to right or right to left.
+
+    Parameters:
+        img: Frame to show the visual analytics.
+        width: width of the frame.
+        centroid: current position of the centroid.
+        previous: previous position of the centroid.
+    
+    Return:
+        None: this function does not return a parameter.
+    """
     global right
     global left
     if(previous[0]<=width//2):
@@ -227,9 +256,6 @@ def compute_change(img:NDArray, width:int, centroid:tuple[int, int],previous:tup
             left += 1
     right_show = f"Left2Right:{right}"
     left_show = f"Left2Right:{left}"
-    print("P",previous)
-    print("C",centroid)
-    print(width//2)
     cv.putText(img,right_show,(width//40,30),cv.FONT_HERSHEY_SIMPLEX,1,(0,0,255))
     cv.putText(img,left_show,(width//40,60),cv.FONT_HERSHEY_SIMPLEX,1,(0,0,255))
     return None
