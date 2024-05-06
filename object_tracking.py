@@ -255,7 +255,7 @@ def compute_change(img:NDArray, width:int, centroid:tuple[int, int],previous:tup
         if(centroid[0]<width//2):
             left += 1
     right_show = f"Left2Right:{right}"
-    left_show = f"Left2Right:{left}"
+    left_show = f"Right2Left:{left}"
     cv.putText(img,right_show,(width//40,30),cv.FONT_HERSHEY_SIMPLEX,1,(0,0,255))
     cv.putText(img,left_show,(width//40,60),cv.FONT_HERSHEY_SIMPLEX,1,(0,0,255))
     return None
