@@ -128,7 +128,7 @@ def extract_corners_and_descriptors(image:NDArray)-> tuple[list[cv.KeyPoint], ND
     kp, des = sift.compute(image,keypoints1)
     return kp, des
 
-def draw_matches(img2: np.ndarray, descriptors1: np.ndarray, descriptors2: np.ndarray, kp1: list[cv.KeyPoint], kp2: list[cv.KeyPoint]):
+def draw_matches(img2: np.ndarray, descriptors1: np.ndarray, descriptors2: np.ndarray, kp1: list[cv.KeyPoint], kp2: list[cv.KeyPoint])->None:
     """
     Draws matches between two images based on their descriptors and keypoints using RANSAC-based feature matching.
 
@@ -179,9 +179,9 @@ def draw_matches(img2: np.ndarray, descriptors1: np.ndarray, descriptors2: np.nd
         rectangle(x_coordinates, y_coordinates, img_matches)
     #Show current frame
     cv.imshow('Matched Features', img_matches)
-    return match
+    return None
 
-def rectangle(x: np.ndarray, y: np.ndarray, image: np.ndarray):
+def rectangle(x: np.ndarray, y: np.ndarray, image: np.ndarray)->None:
     """
     Draws the bounding box and computes and draws the centroid of the object.
 
@@ -191,7 +191,7 @@ def rectangle(x: np.ndarray, y: np.ndarray, image: np.ndarray):
         image: frame to compute the drawings
 
     Returns:
-        center of the object
+        None
     """
     global previous
     height, width, _ = image.shape
@@ -270,7 +270,7 @@ def pipeline()->None:
         ret, frame = cap.read()
         # Check if the image was correctly captured
         if not ret:
-            print("It seems like a problem has occured, try running the program again, in case the\n"
+            print("either the video ended or a problem occured, try running the program again, in case the\n"
                    "problem keeps ocurring, call : 614-345-3164")
             break
         rescale_frame = resize(frame,args.resize)
