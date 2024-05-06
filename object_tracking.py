@@ -4,6 +4,8 @@ import argparse
 from numpy.typing import NDArray
 
 previous = []
+left = 0
+right = 0
 
 def user_interaction() ->argparse.ArgumentParser:
     """
@@ -175,6 +177,7 @@ def rectangle(x: np.ndarray, y: np.ndarray, image: np.ndarray):
         center of the object
     """
     global previous
+    height, width, _ = image.shape
     xmin = int(min(x))
     xmax = int(max(x))
     ymin = int(min(y))
@@ -187,11 +190,23 @@ def rectangle(x: np.ndarray, y: np.ndarray, image: np.ndarray):
     center_y = (pt1[1] + pt2[1]) // 2
     centroid = (center_x,center_y)
     current = estimate_centroid(centroid,previous)
+    if (previous):
+        compute_change(image,width,current,previous)
     previous = current
     cv.circle(image, (current[0], current[1]), 2, (0, 0, 255), 2)
     return None
 
-def estimate_centroid(current: tuple[int, int], previous: tuple[int, int], smoothing_factor: float = 0.2) -> tuple[int, int]:
+def estimate_centroid(current: tuple[int, int], previous: tuple[int, int], smoothing_factor: float = 0.25) -> tuple[int, int]:
+    """
+    Computes the centorid of the object smoothening the change between the current centroid and the previous one.
+
+    Parameters:
+        Current: Current coordinates of the centroid 
+        Previous: Previous coordinates of the centroid 
+        smoothing_factor: Percentage of change in centroids.
+    Retruns: 
+        Current: Coordinates of the new centroid.
+    """
     if current and previous:
         # Interpolate between current and previous centroid positions based on the smoothing factor
         smoothed_x = int(previous[0] + (current[0] - previous[0]) * smoothing_factor)
@@ -201,6 +216,23 @@ def estimate_centroid(current: tuple[int, int], previous: tuple[int, int], smoot
     else:
         return current
 
+def compute_change(img:NDArray, width:int, centroid:tuple[int, int],previous:tuple[int, int])->None:
+    global right
+    global left
+    if(previous[0]<=width//2):
+        if(centroid[0]>width//2):
+            right += 1
+    elif(previous[0]>=width//2):
+        if(centroid[0]<width//2):
+            left += 1
+    right_show = f"Left2Right:{right}"
+    left_show = f"Left2Right:{left}"
+    print("P",previous)
+    print("C",centroid)
+    print(width//2)
+    cv.putText(img,right_show,(width//40,30),cv.FONT_HERSHEY_SIMPLEX,1,(0,0,255))
+    cv.putText(img,left_show,(width//40,60),cv.FONT_HERSHEY_SIMPLEX,1,(0,0,255))
+    return None
 
 def pipeline()->None:
     args = user_interaction()
